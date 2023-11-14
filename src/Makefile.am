@@ -1,2 +1,2 @@
 bin_PROGRAMS = clox
-clox_SOURCES = clox.c
+clox_SOURCES = main.c
