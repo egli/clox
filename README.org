@@ -3,6 +3,12 @@
 Implementation of the [[https://github.com/munificent/craftinginterpreters][lox programming language]] from the excellent book
 [[https://craftinginterpreters.com/][Crafting Interpreters]] by [[https://stuffwithstuff.com/][Robert Nystrom]].
 
+* Build
+The project is built using CMake:
+#+begin_src shell
+  $ cmake .
+  $ make
+#+end_src
 
 * References
 
