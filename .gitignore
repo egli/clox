@@ -1,10 +1,7 @@
 /Makefile.in
 /aclocal.m4
-/compile
-/config.h.in
-/configure
-/depcomp
-/install-sh
-/missing
-/src/Makefile.in
 /autom4te.cache/
+/build-aux/
+/configure
+/src/Makefile.in
+/src/config.h.in
