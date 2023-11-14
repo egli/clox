@@ -1,0 +1,12 @@
+* clox
+
+Implementation of the [[https://github.com/munificent/craftinginterpreters][lox programming language]] from the excellent book
+[[https://craftinginterpreters.com/][Crafting Interpreters]] by [[https://stuffwithstuff.com/][Robert Nystrom]].
+
+
+* References
+
+- Book :: [[https://craftinginterpreters.com/][Crafting Interpreters]]
+- Blog post :: [[http://journal.stuffwithstuff.com/2020/04/05/crafting-crafting-interpreters/][Crafting "Crafting Interpreters"]]
+- Wiki :: [[https://github.com/munificent/craftinginterpreters/wiki/Lox-implementations][Lox implementations]]
+- Stack-based vs Register-based bytecode instruction sets :: [[https://www.lua.org/doc/jucs05.pdf][The Implementation of Lua 5.0]] 
