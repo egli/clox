@@ -1,2 +1,7 @@
 bin_PROGRAMS = clox
-clox_SOURCES = main.c
+clox_SOURCES =					\
+	memory.h				\
+	memory.c				\
+	chunk.h					\
+	chunk.c					\
+	main.c
