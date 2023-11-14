@@ -1,0 +1,9 @@
+---
+# We'll use defaults from the LLVM style
+BasedOnStyle: LLVM
+
+# Force pointers to the type
+DerivePointerAlignment: false
+PointerAlignment: Left
+...
+
