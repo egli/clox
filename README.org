@@ -1,7 +1,7 @@
 * clox
 
-Implementation of the [[https://github.com/munificent/craftinginterpreters][lox programming language]] from the excellent book
-[[https://craftinginterpreters.com/][Crafting Interpreters]] by [[https://stuffwithstuff.com/][Robert Nystrom]].
+A (wip) implementation of the [[https://github.com/munificent/craftinginterpreters][lox programming language]] from the
+excellent book [[https://craftinginterpreters.com/][Crafting Interpreters]] by [[https://stuffwithstuff.com/][Robert Nystrom]].
 
 * Build
 The project is built using CMake:
@@ -9,6 +9,10 @@ The project is built using CMake:
   $ cmake .
   $ make
 #+end_src
+
+* Status
+
+The source code is complete up to [[https://craftinginterpreters.com/a-virtual-machine.html][chapter 15]]
 
 * References
 
