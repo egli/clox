@@ -92,6 +92,7 @@ static void skipWhitespace() {
       } else {
 	return;
       }
+      break;
     default:
       return;
     }
