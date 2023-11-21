@@ -12,7 +12,7 @@ The project is built using CMake:
 
 * Status
 
-The source code is complete up to [[https://craftinginterpreters.com/scanning-on-demand.html][chapter 16]]
+The source code is complete up to [[https://craftinginterpreters.com/compiling-expressions.html][chapter 17]].
 
 * References
 
