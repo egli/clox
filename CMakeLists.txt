@@ -9,6 +9,7 @@ add_executable(clox
   src/compiler.c
   src/debug.c
   src/value.c
+  src/object.c
   src/memory.c
   src/vm.c
   src/main.c
