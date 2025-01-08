@@ -4,10 +4,15 @@ A (wip) implementation of the [[https://github.com/munificent/craftinginterprete
 excellent book [[https://craftinginterpreters.com/][Crafting Interpreters]] by [[https://stuffwithstuff.com/][Robert Nystrom]].
 
 * Build
-The project is built using CMake:
+The project is built using a Justfile:
 #+begin_src shell
-  $ cmake .
-  $ make
+  $ just build
+#+end_src
+
+* Run the interpreter
+
+#+begin_src shell
+  $ just run
 #+end_src
 
 * Status
