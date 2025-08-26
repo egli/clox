@@ -17,7 +17,7 @@ The project is built using a Justfile:
 
 * Status
 
-The source code is complete up to [[https://craftinginterpreters.com/hash-tables.html#retrieving-values][chapter 20.4.4]].
+The source code is complete up to [[https://craftinginterpreters.com/chunks-of-bytecode.html#line-information][chapter 24.6]].
 
 * References
 
