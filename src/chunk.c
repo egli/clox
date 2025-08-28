@@ -36,3 +36,15 @@ int addConstant(Chunk* chunk, Value value) {
   writeValueArray(&chunk->constants, value);
   return chunk->constants.count - 1;
 }
+
+void writeConstant(Chunk* chunk, Value value, int line) {
+  writeValueArray(&chunk->constants, value);
+  int index = chunk->constants.count - 1;
+  uint8_t byte1 = (index >> 16) & 0xFF;
+  uint8_t byte2 = (index >> 8) & 0xFF;
+  uint8_t byte3 = index & 0xFF;
+  writeChunk(chunk, OP_CONSTANT_LONG, line);
+  writeChunk(chunk, byte1, line);
+  writeChunk(chunk, byte2, line);
+  writeChunk(chunk, byte3, line);
+}

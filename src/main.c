@@ -7,8 +7,10 @@ int main(int argc, const char* argv[]) {
   initChunk(&chunk);
 
   int constant = addConstant(&chunk, 1.2);
-  writeChunk(&chunk, OP_CONSTANT, 123);
-  writeChunk(&chunk, constant, 123);
+  writeChunk(&chunk, OP_CONSTANT, 100);
+  writeChunk(&chunk, constant, 100);
+  writeConstant(&chunk, 7.5, 101);
+  writeConstant(&chunk, 8.5, 102);
   
   writeChunk(&chunk, OP_RETURN, 123);
 
