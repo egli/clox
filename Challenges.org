@@ -16,7 +16,8 @@ Hint: It’s not necessary for getLine() to be particularly efficient.
 Since it is called only when a runtime error occurs, it is well off
 the critical path where performance matters.
 
-** TODO OP_CONSTANT_LONG
+** DONE OP_CONSTANT_LONG
+CLOSED: [2025-08-28 Do 16:15]
 Because ~OP_CONSTANT~ uses only a single byte for its operand, a chunk
 may only contain up to 256 different constants. That’s small enough
 that people writing real-world code will hit that limit. We could use
@@ -45,6 +46,8 @@ for ~OP_CONSTANT_LONG~ instructions.
 
 Defining two instructions seems to be the best of both worlds. What
 sacrifices, if any, does it force on us?
+
+See the exercise/14.2 branch for an implementation.
 
 ** TODO DIY malloc() and free()
 Our ~reallocate()~ function relies on the C standard library for dynamic
