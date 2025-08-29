@@ -21,11 +21,9 @@ static int constantInstruction(const char* name, Chunk* chunk,
 
 static int constantLongInstruction(const char* name, Chunk* chunk,
 				   int offset) {
-  uint8_t byte1 = chunk->code[offset + 1];
-  uint8_t byte2 = chunk->code[offset + 2];
-  uint8_t byte3 = chunk->code[offset + 3];
-  int constant = (byte1 << 16) | (byte2 << 8) | byte3;
-  printf("%-16s %u %u %u '", name, byte1, byte2, byte3);
+  uint8_t* bytes = &chunk->code[offset + 1];
+  int constant = (bytes[2]<<0) | (bytes[1]<<8) | (bytes[0]<<16);
+  printf("%-16s %u %u %u '", name, bytes[0], bytes[1], bytes[2]);
   printValue(chunk->constants.values[constant]);
   printf("'\n");
   return offset + 4;
