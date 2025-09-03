@@ -44,6 +44,8 @@ static InterpretResult run() {
 #endif
     uint8_t instruction;
     switch (instruction = READ_BYTE()) {
+    case OP_NEGATE:
+      push(-pop());
     case OP_RETURN:
       printValue(pop());
       printf("\n");
