@@ -66,7 +66,8 @@ heap. It’s your job to define how it does that.
 
 * A Virtual Machine
 
-** TODO Bytecode instruction sequences
+** DONE Bytecode instruction sequences
+CLOSED: [2025-09-10 Mi 18:39]
 What bytecode instruction sequences would you generate for the following expressions:
 
 #+begin_example
@@ -79,14 +80,42 @@ What bytecode instruction sequences would you generate for the following express
 (Remember that Lox does not have a syntax for negative number
 literals, so the -5 is negating the number 5.)
 
+#+begin_example
+;; 1 * 2 + 3
+OP_CONSTANT 1
+OP_CONSTANT 2
+OP_MULTIPLY
+OP_CONSTANT 3
+OP_ADD
+;; 1 + 2 * 3
+OP_CONSTANT 1
+OP_CONSTANT 2
+OP_CONSTANT 3
+OP_MULTIPLY
+OP_ADD
+;; 3 - 2 - 1
+OP_CONSTANT 3
+OP_CONSTANT 2
+OP_SUBTRACT
+OP_CONSTANT 1
+OP_SUBTRACT
+;; 1 + 2 * 3 - 4 / -5
+OP_CONSTANT 1
+OP_CONSTANT 2
+OP_CONSTANT 3
+OP_MULTIPLY
+OP_ADD
+OP_CONSTANT 4
+OP_CONSTANT 5
+OP_NEGATE
+OP_DIVIDE
+OP_SUBTRACT
+#+end_example
+
 ** TODO Eliminate ~OP_NEGATE~
 If we really wanted a minimal instruction set, we could eliminate
 either ~OP_NEGATE~ or ~OP_SUBTRACT~. Show the bytecode instruction
 sequence you would generate for:
-
-#+begin_example
-4 - 3 * -2
-#+end_example
 
 First, without using ~OP_NEGATE~. Then, without using ~OP_SUBTRACT~.
 
@@ -94,7 +123,47 @@ Given the above, do you think it makes sense to have both
 instructions? Why or why not? Are there any other redundant
 instructions you would consider including?
 
-** Dynamic stack
+#+begin_example
+4 - 3 * -2
+#+end_example
+
+#+begin_example
+;; 4 - 3 * -2
+OP_CONSTANT 4
+OP_CONSTANT 5
+OP_CONSTANT 2
+OP_NEGATE
+OP_MULTIPLY
+OP_SUBTRACT
+#+end_example
+
+Convert -2 to 0-2
+
+#+begin_example
+;; 4 - 3 * -2
+OP_CONSTANT 4
+OP_CONSTANT 5
+OP_CONSTANT 0
+OP_CONSTANT 2
+OP_SUBTRACT
+OP_MULTIPLY
+OP_SUBTRACT
+#+end_example
+
+Convert a-b to a+-b
+#+begin_example
+;; 4 - 3 * -2
+OP_CONSTANT 4
+OP_CONSTANT 5
+OP_CONSTANT 2
+OP_NEGATE
+OP_MULTIPLY
+OP_NEGATE
+OP_ADD
+#+end_example
+
+
+** TODO Dynamic stack
 Our VM’s stack has a fixed size, and we don’t check if pushing a value
 overflows it. This means the wrong series of instructions could cause
 our interpreter to crash or go into undefined behavior. Avoid that by
@@ -102,7 +171,7 @@ dynamically growing the stack as needed.
 
 What are the costs and benefits of doing so?
 
-** ~OP_NEGATE~ in place
+** TODO ~OP_NEGATE~ in place
 To interpret ~OP_NEGATE~, we pop the operand, negate the value, and
 then push the result. That’s a simple implementation, but it
 increments and decrements ~stackTop~ unnecessarily, since the stack
