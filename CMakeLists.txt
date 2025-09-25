@@ -5,9 +5,11 @@ SET(CMAKE_COLOR_MAKEFILE OFF)
 
 add_executable(clox
   src/chunk.c
+  src/compiler.c
   src/debug.c
+  src/main.c
   src/memory.c
+  src/scanner.c
   src/value.c
   src/vm.c
-  src/main.c
 )
