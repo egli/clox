@@ -218,9 +218,8 @@ What tokens would you emit for:
 Consider looking at other language implementations that support
 interpolation to see how they handle it.
 
-** TODO '>>' vs '>'
-
-
+** DONE '>>' vs '>'
+CLOSED: [2025-09-25 Do 14:07]
 Several languages use angle brackets for generics and also have a ~>>~
 right shift operator. This led to a classic problem in early versions
 of C++:
@@ -237,7 +236,20 @@ Later versions of C++ are smarter and can handle the above code. Java
 and C# never had the problem. How do those languages specify and
 implement this?
 
-** TODO Contextual Keywords
+*** Answer
+The C# and the Java lexers follow the maximal munch" rule, i.e. eat as
+much as they can. However they avoid the ~>>~ problem by being aware
+of the context in this case the closing generics. In that case the
+~>>~ are interpreted as two consecutive '>' tokens.
+
+Implementation approach:
+- Track generic nesting depth in parser
+- When seeing '>', check if in generic context
+- If so, treat each '>' separately for closing generics
+- Otherwise, combine as '>>' for right-shift operator
+
+** DONE Contextual Keywords
+CLOSED: [2025-09-25 Do 13:59]
 
 Many languages, especially later in their evolution, define
 “contextual keywords”. These are identifiers that act like reserved
@@ -251,3 +263,24 @@ Name a few contextual keywords from other languages, and the context
 where they are meaningful. What are the pros and cons of having
 contextual keywords? How would you implement them in your language’s
 front end if you needed to?
+
+*** Answer
+- [X] Name a few
+  - Apparently Java uses contextual keywords in module declarations
+- [X] Pros and cons
+  + backward compatibility (existing code using these words as identifiers won't break)
+  + Language evolution without breaking changes
+  + Increased parser complexity
+  + Can be confusing for developers (same word has different meanings)
+  + Makes language specification more complex
+  + Can make code harder to read if the context isn't immediately clear
+- [X] Implementation?
+  1. Lexer: Tokenize these words as regular identifiers
+  2. Parser: Check the parsing context (e.g., inside a property
+     declaration)
+  3. When in the relevant context, check if the identifier matches a
+     contextual keyword
+  4. If matched, treat it as the special syntax; otherwise, process as
+     regular identifier
+
+
