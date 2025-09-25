@@ -180,3 +180,74 @@ negate the value in place on the stack and leave ~stackTop~ alone. Try
 that and see if you can measure a performance difference.
 
 Are there other instructions where you can do a similar optimization?
+
+* Scanning on Demand
+** TODO String interpolation
+Many newer languages support string interpolation. Inside a string
+literal, you have some sort of special delimiters—most commonly ${ at
+the beginning and } at the end. Between those delimiters, any
+expression can appear. When the string literal is executed, the inner
+expression is evaluated, converted to a string, and then merged with
+the surrounding string literal.
+
+For example, if Lox supported string interpolation, then this...
+
+#+begin_src lox
+var drink = "Tea";
+var steep = 4;
+var cool = 2;
+print "${drink} will be ready in ${steep + cool} minutes.";
+#+end_src
+
+... would print:
+
+#+begin_example
+Tea will be ready in 6 minutes.
+#+end_example
+
+What token types would you define to implement a scanner for string
+interpolation? What sequence of tokens would you emit for the above
+string literal?
+
+What tokens would you emit for:
+
+#+begin_example
+"Nested ${"interpolation?! Are you ${"mad?!"}"}"
+#+end_example
+
+Consider looking at other language implementations that support
+interpolation to see how they handle it.
+
+** TODO '>>' vs '>'
+
+
+Several languages use angle brackets for generics and also have a ~>>~
+right shift operator. This led to a classic problem in early versions
+of C++:
+
+#+begin_src cpp
+vector<vector<string>> nestedVectors;
+#+end_src
+
+This would produce a compile error because the ~>>~ was lexed to a
+single right shift token, not two ~>~ tokens. Users were forced to
+avoid this by putting a space between the closing angle brackets.
+
+Later versions of C++ are smarter and can handle the above code. Java
+and C# never had the problem. How do those languages specify and
+implement this?
+
+** TODO Contextual Keywords
+
+Many languages, especially later in their evolution, define
+“contextual keywords”. These are identifiers that act like reserved
+words in some contexts but can be normal user-defined identifiers in
+others.
+
+For example, ~await~ is a keyword inside an ~async~ method in C#, but
+in other methods, you can use ~await~ as your own identifier.
+
+Name a few contextual keywords from other languages, and the context
+where they are meaningful. What are the pros and cons of having
+contextual keywords? How would you implement them in your language’s
+front end if you needed to?
