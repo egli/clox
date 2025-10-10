@@ -17,7 +17,7 @@ The project is built using a Justfile:
 
 * Status
 
-The source code is complete up to [[https://craftinginterpreters.com/scanning-on-demand.html#identifiers-and-keywords][chapter 16.4]].
+The source code is complete up to [[https://craftinginterpreters.com/compiling-expressions.html][chapter 17]].
 
 * References
 
