@@ -358,7 +358,8 @@ As far as I know the only token that is both prefix and infix is ~-~.
 - Python :: has ~*~ for unpacking
 - Rust :: has ~*~ for dereferencing and ~&~ for reference/borrow
 
-** "mixfix" expressions
+** DONE "Mixfix" expressions
+CLOSED: [2025-10-10 Fr 17:54]
 You might be wondering about complex "mixfix" expressions that have
 more than two operands separated by tokens. C’s conditional or
 “ternary” operator, ~?:~, is a widely known one.
@@ -366,3 +367,80 @@ more than two operands separated by tokens. C’s conditional or
 Add support for that operator to the compiler. You don’t have to
 generate any bytecode, just show how you would hook it up to the
 parser and handle the operands.
+
+*** Answer
+See branch exercise/17.3
+
+You need to make the following changes:
+
+**** Add tokens to the scanner
+#+begin_src c
+TOKEN_QUESTION,    // ?
+TOKEN_COLON,       // :
+#+end_src
+
+**** Add precedence level
+#+begin_src c
+typedef enum {
+  PREC_NONE,
+  PREC_ASSIGNMENT, // =
+  PREC_TERNARY,    // ? :  (new - just above assignment)
+  PREC_OR,         // or
+  // ... rest unchanged
+} Precedence;
+#+end_src
+
+**** Add bytecode instruction
+#+begin_src c
+// In chunk.h or wherever opcodes are defined
+OP_CONDITIONAL,  // Ternary conditional operator
+#+end_src
+
+**** Implement the parsing function
+#+begin_src c
+static void ternary() {
+  // The condition is already compiled by the time we get here
+
+  // Compile the "then" expression
+  expression();
+  consume(TOKEN_COLON, "Expect ':' after then branch of ternary operator.");
+
+  // Compile the "else" expression
+  parsePrecedence(PREC_TERNARY);
+
+  emitByte(OP_CONDITIONAL);
+}
+#+end_src
+
+The key insight is that the ternary operator is right-associative, so
+when parsing the "else" part, we use =PREC_TERNARY= (not
+=PREC_TERNARY + 1=) to allow chaining like =a ? b : c ? d : e=.
+
+**** Update the parse rules table
+#+begin_src c
+ParseRule rules[] = {
+  // ... existing rules ...
+  [TOKEN_QUESTION]    = {NULL,     ternary, PREC_TERNARY},
+  [TOKEN_COLON]       = {NULL,     NULL,    PREC_NONE},
+  // ... rest unchanged
+};
+#+end_src
+
+**** Implement the VM instruction
+#+begin_src c
+// In vm.c, inside the instruction switch
+case OP_CONDITIONAL: {
+  Value elseValue = pop();
+  Value thenValue = pop();
+  Value condition = pop();
+
+  push(isFalsey(condition) ? elseValue : thenValue);
+  break;
+}
+#+end_src
+
+**** Implement the bytecode in the disassembler
+#+begin_src c
+    case OP_CONDITIONAL:
+    return simpleInstruction("OP_CONDITIONAL", offset);
+#+end_src
