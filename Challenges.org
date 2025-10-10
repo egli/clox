@@ -1,5 +1,4 @@
 * Chunks of Bytecode
-
 ** TODO Run-length encoding for lines
 Our encoding of line information is hilariously wasteful of memory.
 Given that a series of instructions often correspond to the same
@@ -65,7 +64,6 @@ parcels out blobs of memory from that single region, your own personal
 heap. It’s your job to define how it does that.
 
 * A Virtual Machine
-
 ** DONE Bytecode instruction sequences
 CLOSED: [2025-09-10 Mi 18:39]
 What bytecode instruction sequences would you generate for the following expressions:
@@ -161,7 +159,6 @@ OP_MULTIPLY
 OP_NEGATE
 OP_ADD
 #+end_example
-
 
 ** TODO Dynamic stack
 Our VM’s stack has a fixed size, and we don’t check if pushing a value
@@ -283,4 +280,89 @@ front end if you needed to?
   4. If matched, treat it as the special syntax; otherwise, process as
      regular identifier
 
+* Compiling Expressions
+** DONE Call trace
+CLOSED: [2025-10-10 Fr 17:15]
+To really understand the parser, you need to see how execution threads
+through the interesting parsing functions -- ~parsePrecedence()~ and
+the parser functions stored in the table. Take this (strange)
+expression:
 
+#+begin_example
+(-1 + 2) * 3 - -4
+#+end_example
+
+Write a trace of how those functions are called. Show the order they
+are called, which calls which, and the arguments passed to them.
+
+*** Answer
+compile()
+├── expression()
+    ├── parsePrecedence(PREC_ASSIGNMENT)
+        ├── grouping()  // for "(-1 + 2)"
+        │   ├── expression()
+        │       ├── parsePrecedence(PREC_ASSIGNMENT)
+        │           ├── unary()  // for "-1"
+        │           │   ├── parsePrecedence(PREC_UNARY)
+        │           │       └── number()  // for "1"
+        │           └── binary()  // for "+"
+        │               ├── parsePrecedence(PREC_FACTOR)  // PREC_TERM + 1
+        │                   └── number()  // for "2"
+        └── binary()  // for "*"
+        │   ├── parsePrecedence(PREC_UNARY)  // PREC_FACTOR + 1
+        │       └── number()  // for "3"
+        └── binary()  // for "-"
+            ├── parsePrecedence(PREC_FACTOR)  // PREC_TERM + 1
+                ├── unary()  // for "-4"
+                    ├── parsePrecedence(PREC_UNARY)
+                        └── number()  // for "4"
+
+For (-1 + 2) - 3 * -4:
+
+compile()
+├── expression()
+    ├── parsePrecedence(PREC_ASSIGNMENT)
+        ├── grouping()  // for "(-1 + 2)"
+        │   ├── expression()
+        │       ├── parsePrecedence(PREC_ASSIGNMENT)
+        │           ├── unary()  // for "-1"
+        │           │   ├── parsePrecedence(PREC_UNARY)
+        │           │       └── number()  // for "1"
+        │           └── binary()  // for "+"
+        │               ├── parsePrecedence(PREC_FACTOR)  // PREC_TERM + 1
+        │                   └── number()  // for "2"
+        └── binary()  // for "-"
+            ├── parsePrecedence(PREC_FACTOR)  // PREC_TERM + 1
+                ├── number()  // for "3"
+                └── binary()  // for "*"
+                    ├── parsePrecedence(PREC_UNARY)  // PREC_FACTOR + 1
+                        ├── unary()  // for "-4"
+                            ├── parsePrecedence(PREC_UNARY)
+                                └── number()  // for "4"
+
+** DONE Both prefix and infix
+CLOSED: [2025-10-10 Fr 17:15]
+The ParseRule row for ~TOKEN_MINUS~ has both prefix and infix function
+pointers. That’s because ~-~ is both a prefix operator (unary
+negation) and an infix one (subtraction).
+
+In the full Lox language, what other tokens can be used in both prefix
+and infix positions? What about in C or in another language of your
+choice?
+
+*** Answer
+As far as I know the only token that is both prefix and infix is ~-~.
+
+- C :: additionally has ~*~ (arithmetic, dereferencing), ~&~
+  (address-of, bitwise AND)
+- Python :: has ~*~ for unpacking
+- Rust :: has ~*~ for dereferencing and ~&~ for reference/borrow
+
+** "mixfix" expressions
+You might be wondering about complex "mixfix" expressions that have
+more than two operands separated by tokens. C’s conditional or
+“ternary” operator, ~?:~, is a widely known one.
+
+Add support for that operator to the compiler. You don’t have to
+generate any bytecode, just show how you would hook it up to the
+parser and handle the operands.
