@@ -21,6 +21,7 @@ typedef struct {
 typedef enum {
   PREC_NONE,
   PREC_ASSIGNMENT, // =
+  PREC_TERNARY,    // ? :
   PREC_OR,         // or
   PREC_AND,        // and
   PREC_EQUALITY,   // == !=
@@ -167,6 +168,19 @@ static void binary() {
   }
 }
 
+static void ternary() {
+  // The condition is already compiled by the time we get here
+
+  // Compile the "then" expression
+  expression();
+  consume(TOKEN_COLON, "Expect ':' after then branch of ternary operator.");
+
+  // Compile the "else" expression
+  parsePrecedence(PREC_TERNARY);
+
+  emitByte(OP_CONDITIONAL);
+}
+
 ParseRule rules[] = {
   [TOKEN_LEFT_PAREN]  	= {grouping, NULL,   PREC_NONE},
   [TOKEN_RIGHT_PAREN] 	= {NULL,     NULL,   PREC_NONE},
@@ -179,6 +193,8 @@ ParseRule rules[] = {
   [TOKEN_SEMICOLON]   	= {NULL,     NULL,   PREC_NONE},
   [TOKEN_SLASH]       	= {NULL,     binary, PREC_FACTOR},
   [TOKEN_STAR]        	= {NULL,     binary, PREC_FACTOR},
+  [TOKEN_QUESTION]      = {NULL,     ternary, PREC_TERNARY},
+  [TOKEN_COLON]         = {NULL,     NULL,    PREC_NONE},
   [TOKEN_BANG]        	= {NULL,     NULL,   PREC_NONE},
   [TOKEN_BANG_EQUAL]  	= {NULL,     NULL,   PREC_NONE},
   [TOKEN_EQUAL]       	= {NULL,     NULL,   PREC_NONE},

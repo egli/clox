@@ -57,6 +57,11 @@ static InterpretResult run() {
     case OP_MULTIPLY: BINARY_OP(*); break;
     case OP_DIVIDE:   BINARY_OP(/); break;
     case OP_NEGATE:   push(-pop()); break;
+    case OP_CONDITIONAL:
+      Value elseValue = pop();
+      Value thenValue = pop();
+      Value condition = pop();
+      push(condition == 1.0 ? thenValue : elseValue);
     case OP_RETURN:
       printValue(pop());
       printf("\n");
