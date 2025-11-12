@@ -444,3 +444,26 @@ case OP_CONDITIONAL: {
     case OP_CONDITIONAL:
     return simpleInstruction("OP_CONDITIONAL", offset);
 #+end_src
+
+* Types of Values
+** DONE Eliminate instructions
+CLOSED: [2025-11-12 Mi 20:47]
+We could reduce our binary operators even further than we did here.
+Which other instructions can you eliminate, and how would the compiler
+cope with their absence?
+
+- ~OP_MULTIPLY~ in terms of ~OP_ADD~
+- ~OP_NIL~, ~OP_TRUE~ and ~OP_FALSE~ in terms of ~OP_CONSTANT~ with
+  some well crafted constants array
+
+** DONE Adding instruction
+CLOSED: [2025-11-12 Mi 20:47]
+Conversely, we can improve the speed of our bytecode VM by adding more
+specific instructions that correspond to higher-level operations. What
+instructions would you define to speed up the kind of user code we
+added support for in this chapter?
+
+- specific constants, like 0 or 1, similarly to ~OP_TRUE~ we could
+  have ~OP_ONE~
+- specific constant arithmetic operations, i.e. + 1 could become ~OP_ADD_ONE~
+- ah or adding a constant could become ~OP_ADD_CONST~
