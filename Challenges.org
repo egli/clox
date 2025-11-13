@@ -455,6 +455,9 @@ cope with their absence?
 - ~OP_MULTIPLY~ in terms of ~OP_ADD~
 - ~OP_NIL~, ~OP_TRUE~ and ~OP_FALSE~ in terms of ~OP_CONSTANT~ with
   some well crafted constants array
+- ~OP_TRUE~ as ~OP_FALSE~ followed by ~OP_NOT~
+- ~OP_SUBTRACT~ as ~OP_NEGATE~ followed by ~OP_ADD~ (?)
+
 
 ** DONE Adding instruction
 CLOSED: [2025-11-12 Mi 20:47]
