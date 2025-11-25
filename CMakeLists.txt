@@ -12,4 +12,5 @@ add_executable(clox
   src/scanner.c
   src/value.c
   src/vm.c
+  src/object.c
 )
