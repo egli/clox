@@ -492,9 +492,12 @@ which ObjStrings own their character array and which are “constant
 strings” that just point back to the original source string or some
 other non-freeable location. Add support for this.
 
-** TODO Add string and other types
+** DONE Add string and other types
+CLOSED: [2025-11-27 Do 15:40]
 If Lox was your language, what would you have it do when a user tries
 to use + with one string operand and the other some other type?
 Justify your choice. What do other languages do?
 
-
+I would burn and crash, I mean report an error. I wouldn not allow
+this implicit type conversion as it leads to all sorts of subtle to
+find bugs.
