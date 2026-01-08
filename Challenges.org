@@ -503,7 +503,8 @@ this implicit type conversion as it leads to all sorts of subtle to
 find bugs.
 
 * Global Variables
-** TODO Global variable name in the constant table
+** DONE Global variable name in the constant table
+CLOSED: [2026-01-08 Do 11:02]
 The compiler adds a global variable’s name to the constant table as a
 string every time an identifier is encountered. It creates a new
 constant each time, even if that variable name is already in a
@@ -515,6 +516,15 @@ chunk.
 
 Optimize this. How does your optimization affect the performance of
 the compiler compared to the runtime? Is this the right trade-off?
+
+*** Answer
+We could just add the variable name and the corresponding index to a
+hash table.
+
+The compiler will be slower. The runtime behavior will not be affected
+(if you ignore the fact that the constants table will be smaller).
+
+See excercise/21.1 for the implementation.
 
 ** TODO Global variable without hash table lookup
 Looking up a global variable by name in a hash table each time it is
