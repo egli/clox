@@ -526,13 +526,25 @@ The compiler will be slower. The runtime behavior will not be affected
 
 See excercise/21.1 for the implementation.
 
-** TODO Global variable without hash table lookup
+** DONE Global variable without hash table lookup
+CLOSED: [2026-01-08 Do 14:38]
 Looking up a global variable by name in a hash table each time it is
 used is pretty slow, even with a good hash table. Can you come up with
 a more efficient way to store and access global variables without
 changing the semantics?
 
-** TODO Undefined variables
+*** Answer
+We could keep the global vars in an array in the vm and calculate the
+offset at compile time. The index is basically the order of variable
+declarations. The compiler keeps a hash map with variable name to
+index mapping.
+
+However the compiler only sees one compilation unit (basically a
+Chunk), so in the repl this will not work. It should work within a
+file.
+
+** DONE Undefined variables
+CLOSED: [2026-01-08 Do 14:32]
 When running in the REPL, a user might write a function that
 references an unknown global variable. Then, in the next line, they
 declare the variable. Lox should handle this gracefully by not
@@ -560,4 +572,20 @@ either.
 We could report mistakes like this as compile errors, at least when
 running from a script. Do you think we should? Justify your answer.
 What do other scripting languages you know do?
+
+*** Answer
+Yes, we should, as the variable ~oops~ has not been declared anywhere.
+That is most likely a bug. It is much better for the developer if the
+compiler reports these kinds of issues. However this probably means we
+can no longer have a single pass compiler.
+
+The downside of throwing an error is that
+1) it will be inconsistent with the repl
+2) multi-pass compiler
+
+
+**** Other languages
+|--------+---------------------------------------------------------|
+| Rust   | Strict analysis                                         |
+| Python | Allows undefined variables, runtime error when accessed |
 
