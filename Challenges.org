@@ -516,6 +516,13 @@ chunk.
 Optimize this. How does your optimization affect the performance of
 the compiler compared to the runtime? Is this the right trade-off?
 
+*** Answer
+We could just add the variable name and the corresponding index to a
+hash table.
+
+The compiler will be slower. The runtime behavior will not be affected
+(if you ignore the fact that the constants table will be smaller).
+
 ** TODO Global variable without hash table lookup
 Looking up a global variable by name in a hash table each time it is
 used is pretty slow, even with a good hash table. Can you come up with

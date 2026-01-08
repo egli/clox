@@ -7,6 +7,7 @@
 #include "common.h"
 #include "compiler.h"
 #include "scanner.h"
+#include "table.h"
 #include "value.h"
 
 #ifdef DEBUG_PRINT_CODE
@@ -141,7 +142,15 @@ static uint8_t makeConstant(Value value) {
 }
 
 static uint8_t identifierConstant(Token* name) {
-  return makeConstant(OBJ_VAL(copyString(name->start, name->length)));
+  Value index;
+  ObjString* identifier = copyString(name->start, name->length);
+  // if we have seen the identifier before use the previous index
+  // instead of blindly creating a new entry in the constants list
+  if (!tableGet(&currentChunk()->variables, identifier, &index)) {
+    index = NUMBER_VAL(makeConstant(OBJ_VAL(identifier)));
+    tableSet(&currentChunk()->variables, identifier, index);
+  }
+  return AS_NUMBER(index);
 }
 
 static uint8_t parseVariable(const char* errorMessage) {

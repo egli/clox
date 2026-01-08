@@ -2,6 +2,7 @@
 
 #include "chunk.h"
 #include "memory.h"
+#include "table.h"
 #include "value.h"
 
 void initChunk(Chunk* chunk) {
@@ -10,12 +11,14 @@ void initChunk(Chunk* chunk) {
   chunk->code = NULL;
   chunk->lines = NULL;
   initValueArray(&chunk->constants);
+  initTable(&chunk->variables);
 }
 
 void freeChunk(Chunk* chunk) {
   FREE_ARRAY(uint8_t, chunk->code, chunk->capacity);
   FREE_ARRAY(int, chunk->lines, chunk->capacity);
   freeValueArray(&chunk->constants);
+  freeTable(&chunk->variables);
   initChunk(chunk);
 }
 

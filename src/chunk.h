@@ -2,6 +2,7 @@
 #define clox_chunk_h
 
 #include "common.h"
+#include "table.h"
 #include "value.h"
 
 typedef enum {
@@ -31,6 +32,7 @@ typedef struct {
   int capacity;
   uint8_t* code;
   ValueArray constants;
+  Table variables;
   int* lines;
 } Chunk;
 
