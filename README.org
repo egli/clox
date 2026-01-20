@@ -17,7 +17,7 @@ The project is built using a Justfile:
 
 * Status
 
-The source code is complete up to [[https://craftinginterpreters.com/types-of-values.html][chapter 18]].
+The source code is complete up to [[https://craftinginterpreters.com/local-variables.html][chapter 22]].
 
 * References
 
