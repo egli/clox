@@ -615,6 +615,10 @@ How do other languages handle code like this:
 
 What would you do if it was your language? Why?
 
+*** Answer
+- Allow of a has been defined in a surrounding scope
+- I think Clojure allows shadowing (let [a 1] (let [a a]))
+
 ** TODO Single-assignment variable
 Many languages make a distinction between variables that can be
 reassigned and those that can’t. In Java, the ~final~ modifier
@@ -630,4 +634,8 @@ variable declared using your new keyword should cause a compile error.
 ** TODO More that 256 local vars
 Extend clox to allow more than 256 local variables to be in scope at a
 time.
+
+*** Answer
+I guess the byte code to store and fetch local vars would have to be 3
+bytes (1 byte for the opcode and 2 bytes for the argument)
 
