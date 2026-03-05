@@ -135,6 +135,38 @@ static void emitReturn() {
   emitByte(OP_RETURN);
 }
 
+static uint8_t makeConstant(Value value) {
+  int constant = addConstant(currentChunk(), value);
+  if (constant > UINT8_MAX) {
+    error("Too many constants in one chunk.");
+    return 0;
+  }
+
+  return (uint8_t)constant;
+}
+
+static void emitConstant(Value value) {
+  emitBytes(OP_CONSTANT, makeConstant(value));
+}
+
+static void patchJump(int offset) {
+  // -2 to adjust for the bytecode for the jump offset itself
+  int jump = currentChunk()->count - offset - 2;
+
+  if (jump > UINT16_MAX) {
+    error("Too much code to jump over.");
+  }
+
+  currentChunk()->code[offset] = (jump >> 8) & 0xff;
+  currentChunk()->code[offset + 1] = jump & 0xff;
+}
+
+static void initCompiler(Compiler* compiler) {
+  compiler->localCount = 0;
+  compiler->scopeDepth = 0;
+  current = compiler;
+}
+
 static void endCompiler() {
   emitReturn();
 #ifdef DEBUG_PRINT_CODE
@@ -161,16 +193,6 @@ static void statement();
 static void declaration();
 static ParseRule* getRule(TokenType type);
 static void parsePrecedence(Precedence precedence);
-
-static uint8_t makeConstant(Value value) {
-  int constant = addConstant(currentChunk(), value);
-  if (constant > UINT8_MAX) {
-    error("Too many constants in one chunk.");
-    return 0;
-  }
-
-  return (uint8_t)constant;
-}
 
 static uint8_t identifierConstant(Token* name) {
   return makeConstant(OBJ_VAL(copyString(name->start, name->length)));
@@ -245,36 +267,34 @@ static void defineVariable(uint8_t global) {
   emitBytes(OP_DEFINE_GLOBAL, global);
 }
 
+static void and_(bool canAssign) {
+  int endJump = emitJump(OP_JUMP_IF_FALSE);
+
+  emitByte(OP_POP);
+  parsePrecedence(PREC_AND);
+
+  patchJump(endJump);
+}
+
 static void grouping(bool canAssign) {
   expression();
   consume(TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
 }
 
-static void emitConstant(Value value) {
-  emitBytes(OP_CONSTANT, makeConstant(value));
-}
-
-static void patchJump(int offset) {
-  // -2 to adjust for the bytecode for the jump offset itself
-  int jump = currentChunk()->count - offset - 2;
-
-  if (jump > UINT16_MAX) {
-    error("Too much code to jump over.");
-  }
-
-  currentChunk()->code[offset] = (jump >> 8) & 0xff;
-  currentChunk()->code[offset + 1] = jump & 0xff;
-}
-
-static void initCompiler(Compiler* compiler) {
-  compiler->localCount = 0;
-  compiler->scopeDepth = 0;
-  current = compiler;
-}
-
 static void number(bool canAssign) {
   double value = strtod(parser.previous.start, NULL);
   emitConstant(NUMBER_VAL(value));
+}
+
+static void or_(bool canAssign) {
+  int elseJump = emitJump(OP_JUMP_IF_FALSE);
+  int endJump = emitJump(OP_JUMP);
+
+  patchJump(elseJump);
+  emitByte(OP_POP);
+
+  parsePrecedence(PREC_OR);
+  patchJump(endJump);
 }
 
 static void string(bool canAssign) {
@@ -371,7 +391,7 @@ ParseRule rules[] = {
   [TOKEN_IDENTIFIER]  	= {variable, NULL,   PREC_NONE},
   [TOKEN_STRING]      	= {string,   NULL,   PREC_NONE},
   [TOKEN_NUMBER]      	= {number,   NULL,   PREC_NONE},
-  [TOKEN_AND]         	= {NULL,     NULL,   PREC_NONE},
+  [TOKEN_AND]         	= {NULL,     and_,   PREC_AND},
   [TOKEN_CLASS]       	= {NULL,     NULL,   PREC_NONE},
   [TOKEN_ELSE]        	= {NULL,     NULL,   PREC_NONE},
   [TOKEN_FALSE]       	= {literal,  NULL,   PREC_NONE},
@@ -379,7 +399,7 @@ ParseRule rules[] = {
   [TOKEN_FUN]         	= {NULL,     NULL,   PREC_NONE},
   [TOKEN_IF]  	      	= {NULL,     NULL,   PREC_NONE},
   [TOKEN_NIL] 	      	= {literal,  NULL,   PREC_NONE},
-  [TOKEN_OR]  	      	= {NULL,     NULL,   PREC_NONE},
+  [TOKEN_OR]  	      	= {NULL,     or_,   PREC_OR},
   [TOKEN_PRINT]       	= {NULL,     NULL,   PREC_NONE},
   [TOKEN_RETURN]      	= {NULL,     NULL,   PREC_NONE},
   [TOKEN_SUPER]       	= {NULL,     NULL,   PREC_NONE},
