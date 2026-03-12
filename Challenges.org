@@ -713,12 +713,27 @@ calls. Implement this optimization. Write a couple of benchmarks and
 see how it affects the performance. Do you think the extra code
 complexity is worth it?
 
-** TODO Arity checking for native function
+*** Answer
+Add a local (register) var to contain the ip. Replace all occurences
+of ~frame->ip~ with ~ip~. Set the ~ip~ in the ~OP_CALL~ and the
+~OP_RETURN~ case. But I get a segfault.
+
+See excercise/24.1 for the implementation.
+
+** DONE Arity checking for native function
+CLOSED: [2026-03-12 Do 10:49]
 Native function calls are fast in part because we don’t validate that
 the call passes as many arguments as the function expects. We really
 should, or an incorrect call to a native function without enough
 arguments could cause the function to read uninitialized memory. Add
 arity checking.
+
+*** Answer
+Add an arity field to the ~ObjNative~ struct. Pass the arity when
+defining native functions in ~defineNative~. Then check the arity in
+the ~OBJ_NATIVE~ case in ~callValue~. Feels a bit clunky
+
+See excercise/24.2 for the implementation.
 
 ** TODO Runtime errors for native functions
 Right now, there’s no way for a native function to signal a runtime
@@ -731,7 +746,14 @@ report a runtime error.
 Extend the native function system to support that. How does this
 capability affect the performance of native calls?
 
-** TODO Add some more native functions
+** DONE Add some more native functions
+CLOSED: [2026-03-12 Do 10:49]
 Add some more native functions to do things you find useful. Write
 some programs using those. What did you add? How do they affect the
 feel of the language and how practical it is?
+
+*** Answer
+Add ~random~ and ~sleep~ (to have a function with an argument)
+
+See excercise/24.4 for the implementation.
+
