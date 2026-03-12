@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #include "chunk.h"
 #include "common.h"
@@ -17,6 +19,16 @@ VM vm;
 
 static Value clockNative(int argCount, Value* args) {
   return NUMBER_VAL((double)clock() / CLOCKS_PER_SEC);
+}
+
+static Value randNative(int argCount, Value* args) {
+  return NUMBER_VAL((double)rand());
+}
+
+static Value sleepNative(int argCount, Value* args) {
+  int seconds = AS_NUMBER(args[0]);
+  sleep(seconds);
+  return NIL_VAL;
 }
 
 static void resetStack() {
@@ -45,9 +57,9 @@ static void runtimeError(const char* format, ...) {
   resetStack();
 }
 
-static void defineNative(const char* name, NativeFn function) {
+static void defineNative(const char* name, NativeFn function, int arity) {
   push(OBJ_VAL(copyString(name, (int)strlen(name))));
-  push(OBJ_VAL(newNative(function)));
+  push(OBJ_VAL(newNative(function, arity)));
   tableSet(&vm.globals, AS_STRING(vm.stack[0]), vm.stack[1]);
   pop();
   pop();
@@ -59,7 +71,9 @@ void initVM() {
   initTable(&vm.globals);
   initTable(&vm.strings);
 
-  defineNative("clock", clockNative);
+  defineNative("clock", clockNative, 0);
+  defineNative("random", randNative, 0);
+  defineNative("sleep", sleepNative, 1);
 }
 
 void freeVM() {
@@ -104,7 +118,13 @@ static bool callValue(Value callee, int argCount) {
     case OBJ_FUNCTION:
       return call(AS_FUNCTION(callee), argCount);
     case OBJ_NATIVE: {
-      NativeFn native = AS_NATIVE(callee);
+      ObjNative* nativeFn =  AS_NATIVE(callee);
+      if (argCount != nativeFn->arity) {
+	runtimeError("Expected %d arguments but got %d.", nativeFn->arity, argCount);
+	return false;
+      }
+
+      NativeFn native = nativeFn->function;
       Value result = native(argCount, vm.stackTop - argCount);
       vm.stackTop -= argCount + 1;
       push(result);
