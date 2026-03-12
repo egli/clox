@@ -1,8 +1,10 @@
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 
 #include "chunk.h"
 #include "common.h"
@@ -17,6 +19,16 @@ VM vm;
 
 static Value clockNative(int argCount, Value* args) {
   return NUMBER_VAL((double)clock() / CLOCKS_PER_SEC);
+}
+
+static Value randNative(int argCount, Value* args) {
+  return NUMBER_VAL((double)rand());
+}
+
+static Value sleepNative(int argCount, Value* args) {
+  int seconds = AS_NUMBER(args[0]);
+  sleep(seconds);
+  return NIL_VAL;
 }
 
 static void resetStack() {
@@ -60,6 +72,8 @@ void initVM() {
   initTable(&vm.strings);
 
   defineNative("clock", clockNative);
+  defineNative("random", randNative);
+  defineNative("sleep", sleepNative);
 }
 
 void freeVM() {
