@@ -17,7 +17,7 @@ The project is built using a Justfile:
 
 * Status
 
-The source code is complete up to [[https://craftinginterpreters.com/garbage-collection.html][chapter 26]].
+The source code is complete up to [[craftinginterpreters.com/classes-and-instances.html][chapter 27]].
 
 * References
 
